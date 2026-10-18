@@ -1,0 +1,12 @@
+node_modules/
+dist/
+playwright-report/
+test-results/
+.DS_Store
+
+# Keep original photos and local build references out of the published repository.
+/public/[0-9]*
+/public/final_photo.*
+/Screenshot*.png
+/PRINCESS_EYANA_CODEX_BUILD_PROMPT.md
+/.vscode/

@@ -1,0 +1,15 @@
+import Phaser from 'phaser';
+import { LevelScene } from './scenes/LevelScene';
+import { gameConfig } from './config/gameConfig';
+import { ui } from './ui';
+import './style.css';
+document.querySelector('#orientation h2')!.textContent=gameConfig.ui.rotateTitle;
+document.querySelector('#orientation p')!.textContent=gameConfig.ui.rotateText;
+ui.root.textContent=gameConfig.ui.loading;
+const game = new Phaser.Game({ type: Phaser.AUTO, parent:'game',width:960,height:540, backgroundColor:'#acd6d6',render:{pixelArt:true,roundPixels:true},scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},physics:{default:'arcade',arcade:{gravity:{x:0,y:gameConfig.movement.gravity},debug:false}},scene:[LevelScene],audio:{noAudio:true} });
+const orient=()=>{const portrait=window.innerHeight>window.innerWidth;document.querySelector('#orientation')!.classList.toggle('show',portrait);ui.setBlocked('orientation',portrait);};
+window.addEventListener('resize',orient);orient();
+document.addEventListener('visibilitychange',()=>{ui.setBlocked('hidden',document.hidden);if(!document.hidden&&ui.screen==='play')ui.pause();});
+window.addEventListener('blur',()=>{if(ui.screen==='play')ui.pause();});
+window.addEventListener('contextmenu',e=>e.preventDefault());
+if(new URLSearchParams(location.search).has('test'))Object.assign(window,{__game:game,__ui:ui,__config:gameConfig});
