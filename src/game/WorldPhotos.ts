@@ -1,6 +1,8 @@
 import type Phaser from 'phaser';
 import { gameConfig as c } from '../config/gameConfig';
 import { assetPath } from '../utils/assetPath';
+import { openPhoto } from './PhotoViewer';
+import { ui } from '../ui';
 
 /** Smooth photographs anchored to world coordinates, above the player's path. */
 export class WorldPhotos {
@@ -44,6 +46,7 @@ export class WorldPhotos {
         img.dataset.src = assetPath(photo.src, c.photoRevision);
         img.alt = photo.caption;
         img.decoding = 'async';
+        img.draggable = false;
         img.onload = () => {
           // Size both the print and its frame from the actual photo proportions.
           const scale = Math.min(184 / img.naturalHeight, 300 / img.naturalWidth);
@@ -56,7 +59,12 @@ export class WorldPhotos {
         img.onerror = () => { img.style.visibility = 'hidden'; };
         const caption = document.createElement('figcaption');
         caption.textContent = photo.caption;
-        frame.append(img, caption);
+        const open = document.createElement('button');
+        open.className = 'photo-open';
+        open.setAttribute('aria-label', `${c.ui.viewPhoto}: ${photo.caption}`);
+        open.onclick = () => { if(ui.screen==='play')openPhoto(assetPath(photo.src,c.photoRevision),photo.caption,value=>ui.setBlocked('photo',value)); };
+        open.append(img);
+        frame.append(open, caption);
         grid.append(frame);
       });
       group.append(grid);
@@ -95,7 +103,8 @@ export class WorldPhotos {
     this.root.style.top = `${rect.top}px`;
     this.root.style.width = `${rect.width}px`;
     this.root.style.height = `${rect.height}px`;
-    this.stage.style.transform = `scale(${rect.width / 960}) translate(${-camera.scrollX}px, ${-camera.scrollY}px)`;
+    this.stage.style.width = `${this.scene.scale.width}px`;
+    this.stage.style.transform = `scale(${rect.height / 540}) translate(${-camera.scrollX}px, ${-camera.scrollY}px)`;
     const hero = this.scene.children.getByName('adventurer') as Phaser.GameObjects.Sprite | null;
     if (hero) {
       this.hero.style.left = `${hero.x - 20}px`;

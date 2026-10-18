@@ -1,6 +1,7 @@
 import { gameConfig as c } from './config/gameConfig';
 import { assetPath } from './utils/assetPath';
 import { audio } from './game/audio';
+import { openPhoto } from './game/PhotoViewer';
 import type { LevelScene } from './scenes/LevelScene';
 export const input = { left: false, right: false, jump: false };
 export class Interface {
@@ -67,7 +68,7 @@ export class Interface {
   restart() { this.screen='menu';this.scene.scene.restart(); }
   reunion() { this.screen='reunion';this.root.innerHTML='';this.sync(); }
   victory() { this.screen='victory';const p=this.panel(`<div class="eyebrow">${c.victoryTitle}</div><div class="little-heart">♥</div><h2>${c.victoryLines[0]}<br><em>${c.victoryLines[1]}</em></h2>`,'victory panel');p.append(this.button(c.ui.happyEnding,()=>this.finale()));this.sync(); }
-  finale() {this.screen='finale';const p=this.panel(`<div class="ending-photo"><img src="${assetPath(c.finalePhoto, c.photoRevision)}" alt="${c.ui.finaleAlt}"/><span>${c.ui.forever}</span></div><div class="ending-copy"><div class="eyebrow">${c.ui.foreverTitle}</div><h2 class="final-message"></h2><div class="ending-actions"></div></div>`,'finale panel');p.querySelector('.final-message')!.textContent=c.finalMessage;const actions=p.querySelector('.ending-actions')!;actions.append(this.button(c.ui.letter,()=>this.letter()),this.button(c.ui.playAgain,()=>this.restart(),'secondary'));const img=p.querySelector('img')!;img.onerror=()=>img.style.visibility='hidden';this.sync();}
+  finale() {this.screen='finale';const p=this.panel(`<div class="ending-photo"><img src="${assetPath(c.finalePhoto, c.photoRevision)}" alt="${c.ui.finaleAlt}"/><span>${c.ui.forever}</span></div><div class="ending-copy"><div class="eyebrow">${c.ui.foreverTitle}</div><h2 class="final-message"></h2><div class="ending-actions"></div></div>`,'finale panel');p.querySelector('.final-message')!.textContent=c.finalMessage;const actions=p.querySelector('.ending-actions')!;actions.append(this.button(c.ui.letter,()=>this.letter()),this.button(c.ui.playAgain,()=>this.restart(),'secondary'));const img=p.querySelector('img')!;img.draggable=false;const photoButton=this.button('',()=>openPhoto(assetPath(c.finalePhoto,c.photoRevision),c.ui.finaleAlt,value=>this.setBlocked('photo',value)),'photo-open');photoButton.setAttribute('aria-label',`${c.ui.viewPhoto}: ${c.ui.finaleAlt}`);img.replaceWith(photoButton);photoButton.append(img);img.onerror=()=>img.style.visibility='hidden';this.sync();}
   letter() {this.screen='letter';const p=this.panel(`<div class="eyebrow">${c.ui.letterEyebrow}</div><h2>${c.ui.letterTitle}</h2><div class="letter-body"></div>`,'letter panel');c.loveLetter.forEach(text=>{const el=document.createElement('p');el.textContent=text;p.querySelector('.letter-body')!.append(el);});p.append(this.button(c.ui.close,()=>this.finale(),'secondary'));this.sync();}
 }
 export const ui = new Interface();

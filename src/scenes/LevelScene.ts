@@ -16,6 +16,10 @@ export class LevelScene extends Phaser.Scene {
     if(!this.textures.exists('hero0'))createArt(this);
     this.physics.world.setBounds(0,-200,WORLD_WIDTH,1000);
     this.drawWorld();
+    const originalSkyWidth=this.scale.width;
+    const resizeSky=()=>this.sky.setScale(this.scale.width/originalSkyWidth,1);
+    this.scale.on('resize',resizeSky);
+    this.events.once('shutdown',()=>this.scale.off('resize',resizeSky));
     this.worldPhotos=new WorldPhotos(this);
     const solid=this.physics.add.staticGroup();
     for(const p of platforms) {
@@ -37,7 +41,7 @@ export class LevelScene extends Phaser.Scene {
   clearKeys() { if(this.keys)for(const key of Object.values(this.keys))key.reset();this.previousJump=false;this.jumpAt=-1000; }
   drawWorld() {
     const sky=this.sky=this.add.graphics().setScrollFactor(0).setDepth(-20);
-    for(let y=0;y<540;y+=4)sky.fillStyle(Phaser.Display.Color.GetColor(170+Math.floor(y*.12),213+Math.floor(y*.025),215-Math.floor(y*.06))).fillRect(0,y,960,4);
+    for(let y=0;y<540;y+=4)sky.fillStyle(Phaser.Display.Color.GetColor(170+Math.floor(y*.12),213+Math.floor(y*.025),215-Math.floor(y*.06))).fillRect(0,y,this.scale.width,4);
     this.add.circle(775,100,42,0xffebbc).setScrollFactor(.04).setDepth(-18);
     const hills=this.add.graphics().setScrollFactor(.16).setDepth(-14);
     for(let i=0;i<12;i++) {hills.fillStyle(i%2?0x94baa5:0xacc9ae).fillEllipse(i*310,400,670,330);}

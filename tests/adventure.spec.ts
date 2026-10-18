@@ -135,3 +135,22 @@ for(const viewport of [{width:1280,height:720},{width:844,height:390}])test(`ope
  await cross('ArrowRight');await expect(story).toBeHidden();await cross('ArrowLeft');await expect(story).toBeVisible();
  expect(await page.evaluate(()=>(window as any).__game.scene.getScene('Level').physics.world.isPaused)).toBe(false);
 });
+
+for(const viewport of [{width:844,height:390},{width:932,height:430}])test(`edge-to-edge landscape and tap photo viewer at ${viewport.width}px`,async({browser})=>{
+ const context=await browser.newContext({viewport,isMobile:true,hasTouch:true});const page=await context.newPage();const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('?test=1');await page.getByRole('button',{name:'Start adventure'}).tap();await page.getByRole('button',{name:'Keep going'}).tap();
+ const assertFills=async()=>{const box=await page.locator('#game canvas').boundingBox();const size=page.viewportSize()!;expect(Math.abs(box!.x)).toBeLessThan(2);expect(Math.abs(box!.y)).toBeLessThan(2);expect(Math.abs(box!.width-size.width)).toBeLessThan(2);expect(Math.abs(box!.height-size.height)).toBeLessThan(2);};
+ await assertFills();
+ await page.evaluate(()=>{const w=window as any;const s=w.__game.scene.getScene('Level');s.player.body.reset(w.__config.galleries[0].x-160,411);s.player.setVelocity(0);});await page.waitForTimeout(650);
+ const first=page.getByRole('button',{name:`Open photo: ${gameConfig.photos[0].caption}`,exact:true});await first.tap();
+ const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();await expect(dialog.locator('canvas')).toBeVisible();
+ expect(await page.evaluate(()=>(window as any).__game.scene.getScene('Level').physics.world.isPaused)).toBe(true);
+ const canvas=await dialog.locator('canvas').boundingBox();expect(canvas!.width).toBeLessThanOrEqual(viewport.width);expect(canvas!.height).toBeLessThan(viewport.height);
+ expect(await dialog.evaluate(el=>el.dispatchEvent(new MouseEvent('contextmenu',{bubbles:true,cancelable:true})))).toBe(false);
+ await expect(dialog.locator('a[download],img')).toHaveCount(0);
+ expect(await page.locator('.world-polaroid img').first().evaluate(el=>(el as HTMLImageElement).draggable)).toBe(false);
+ await page.screenshot({path:`test-results/photo-viewer-${viewport.width}.png`});await dialog.getByRole('button',{name:'Back',exact:true}).tap();await expect(dialog).toHaveCount(0);
+ expect(await page.evaluate(()=>(window as any).__game.scene.getScene('Level').physics.world.isPaused)).toBe(false);
+ await page.setViewportSize({width:1136,height:320});await page.waitForTimeout(150);await assertFills();await page.setViewportSize(viewport);await page.waitForTimeout(150);await assertFills();
+ await page.screenshot({path:`test-results/edge-to-edge-${viewport.width}.png`});expect(errors).toEqual([]);await context.close();
+});

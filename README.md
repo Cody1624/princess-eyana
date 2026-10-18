@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Open the printed local address. Desktop: arrows or A/D to move; Space, W or Up to jump; Escape to pause. Phone: hold the left/right and jump buttons simultaneously. Turn the phone to landscape. A supported fullscreen button appears in the HUD. Sound starts only after a gesture and can be muted.
+Open the printed local address. Desktop: arrows or A/D to move; Space, W or Up to jump; Escape to pause. Phone: hold the left/right and jump buttons simultaneously. Turn the phone to landscape. The game fills the available landscape viewport without letterbox borders, including wide iPhone screens. A supported fullscreen button appears in the HUD. The iOS home-screen web-app mode is enabled for launching from Add to Home Screen. Sound starts only after a gesture and can be muted.
 
 ```sh
 npm run build
@@ -83,3 +83,7 @@ Replace `USERNAME` with your GitHub username. If this folder is already a Git re
 For a different repository name, change the base path in `vite.config.ts` and test URL in `playwright.config.ts`. Deployment status and the published address are available in the workflow’s deployment job.
 
 **Privacy:** GitHub Pages and photos in a public repository/site are publicly accessible. An obscure URL does not provide privacy. Only include photographs you have permission to publish.
+
+## Photo viewer and saving
+
+Tap a framed photo (or the ending photo) to open a larger view. Gameplay pauses while viewing and resumes with Back; Escape also closes the viewer. The viewer renders on canvas, includes no download links, and suppresses context menus, image dragging, and iOS touch callouts. These discourage casual saving; they do not prevent screenshots, browser inspection, direct image requests, or downloading from the public GitHub repository.
