@@ -24,7 +24,7 @@ Production preview: http://localhost:4173/princess-eyana/ (the port is printed b
 
 Edit **`src/config/gameConfig.ts`** for photos, captions, gallery copy, narrative, finale, love letter, UI labels, physics and audio volumes. The game currently uses **28 supplied memories plus one finale photograph**, with captions kept close to their original filenames, with spelling and punctuation fixes.
 
-Original numbered photographs are kept directly in `public/`, along with `public/final_photo.JPG`. Browser-safe sRGB JPEG copies live in `public/photos/memory01.jpg` through `memory28.jpg`, plus `finale.jpg`. The game loads these smaller copies, preserving aspect ratio with contain/letterboxing. Originals are unchanged. After replacing the original photographs, regenerate the web copies with:
+Original numbered photographs are kept locally in `public/`, along with `public/final_photo.JPG`; these originals are excluded from Git and the published repository. Only the optimized web copies are committed. After cloning, supply the originals locally again if you want to regenerate the web copies. Browser-safe sRGB JPEG copies live in `public/photos/memory01.jpg` through `memory28.jpg`, plus `finale.jpg`. The game loads these smaller copies, preserving aspect ratio with contain/letterboxing. Originals are unchanged. After replacing the original photographs, regenerate the web copies with:
 
 ```sh
 npm run photos
@@ -80,6 +80,6 @@ git push -u origin main
 
 Replace `USERNAME` with your GitHub username. If this folder is already a Git repository, skip `git init` and use its existing remote as appropriate.
 
-For a different repository name, change the base path in `vite.config.ts` and test URL in `playwright.config.ts`. This workspace has no configured Git remote, so no repository has been pushed and no live deployment is claimed.
+For a different repository name, change the base path in `vite.config.ts` and test URL in `playwright.config.ts`. Deployment status and the published address are available in the workflow’s deployment job.
 
 **Privacy:** GitHub Pages and photos in a public repository/site are publicly accessible. An obscure URL does not provide privacy. Only include photographs you have permission to publish.
